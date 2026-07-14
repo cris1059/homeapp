@@ -7,7 +7,12 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png"],
+      injectRegister: false,
+      includeAssets: [
+        "icons/icon-192.png",
+        "icons/icon-512.png",
+        "icons/icon-maskable-512.png",
+      ],
       manifest: {
         name: "HOME — Días de casa",
         short_name: "HOME",
@@ -41,25 +46,49 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        // Precache de toda la app (JS, CSS, HTML, iconos, fuentes locales)
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff,woff2,webmanifest}"],
+        // SPA: cualquier ruta cae al index cacheado cuando no hay red
+        navigateFallback: "index.html",
+        navigateFallbackDenylist: [/^\/api/],
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
+        // App propia: cache-first tras precache
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: "CacheFirst",
+            urlPattern: ({ request, sameOrigin }) =>
+              sameOrigin && request.destination === "document",
+            handler: "NetworkFirst",
             options: {
-              cacheName: "google-fonts-cache",
-              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheName: "home-pages",
+              networkTimeoutSeconds: 3,
+              expiration: {
+                maxEntries: 16,
+                maxAgeSeconds: 60 * 60 * 24 * 30,
+              },
             },
           },
           {
-            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+            urlPattern: ({ request, sameOrigin }) =>
+              sameOrigin &&
+              ["style", "script", "worker", "font", "image"].includes(
+                request.destination
+              ),
             handler: "CacheFirst",
             options: {
-              cacheName: "gstatic-fonts-cache",
-              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheName: "home-assets",
+              expiration: {
+                maxEntries: 64,
+                maxAgeSeconds: 60 * 60 * 24 * 365,
+              },
             },
           },
         ],
+      },
+      // En preview/prod el SW está activo; en dev no hace falta SW
+      devOptions: {
+        enabled: false,
       },
     }),
   ],
