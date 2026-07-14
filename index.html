@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#154a3b" />
+    <meta name="description" content="Calendario de días home del equipo" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="HOME" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <title>HOME — Días de casa</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/icon-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true"></div>
+
+    <header class="top">
+      <p class="brand">HOME</p>
+      <p class="tagline">Quién trabaja desde casa esta semana</p>
+    </header>
+
+    <main class="app">
+      <section class="person-picker" aria-label="Filtrar por integrante">
+        <button type="button" class="person is-active" data-person="all">
+          Todos
+        </button>
+      </section>
+
+      <section class="week-nav" aria-label="Navegación de semana">
+        <button type="button" class="nav-btn" id="prev-week" aria-label="Semana anterior">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M12.5 4.5L7 10l5.5 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="week-meta">
+          <p class="week-range" id="week-range"></p>
+          <p class="cycle-badge" id="cycle-badge"></p>
+        </div>
+        <button type="button" class="nav-btn" id="next-week" aria-label="Semana siguiente">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M7.5 4.5L13 10l-5.5 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </section>
+
+      <button type="button" class="today-link" id="go-today" hidden>Ir a esta semana</button>
+
+      <section class="days" id="days" aria-live="polite"></section>
+
+      <section class="legend" aria-label="Leyenda del ciclo">
+        <h2 class="legend-title">Rotación</h2>
+        <p class="legend-copy">
+          Lunes y viernes: todos en casa. Martes: nadie. Miércoles y jueves rotan por ciclo.
+        </p>
+        <ol class="cycle-list" id="cycle-list"></ol>
+      </section>
+    </main>
+
+    <script type="module" src="app.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("./sw.js").catch(() => {});
+        });
+      }
+    </script>
+  </body>
+</html>
