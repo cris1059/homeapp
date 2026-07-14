@@ -43,16 +43,15 @@ export async function ensureNotificationPermission() {
 }
 
 /**
- * Notifica solo si hay red, permiso y mañana es home del favorito
- * (aviso un día antes). Como máximo una vez por día de apertura.
+ * Notifica al abrir la app (online u offline) si mañana es home
+ * del favorito. Como máximo una vez por día de apertura.
+ * No se dispara con la aplicación cerrada (limitación PWA).
  */
 export async function notifyFavoriteHomeIfNeeded({
   favoritePersonId,
   lastNotifiedDate,
-  online,
   today = todayKeyLocal(),
 }) {
-  if (!online) return { notified: false, reason: "offline" };
   if (!favoritePersonId) return { notified: false, reason: "no-favorite" };
   if (lastNotifiedDate === today) return { notified: false, reason: "already" };
   if (!isPersonHomeTomorrow(favoritePersonId)) {

@@ -54,7 +54,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!prefsReady || notifiedThisSession.current || !online) return;
+    if (!prefsReady || notifiedThisSession.current) return;
 
     let cancelled = false;
 
@@ -63,7 +63,6 @@ export default function App() {
       const result = await notifyFavoriteHomeIfNeeded({
         favoritePersonId: prefs.favoritePersonId ?? favoritePersonId,
         lastNotifiedDate: prefs.lastNotifiedDate,
-        online: true,
       });
 
       if (cancelled) return;
@@ -91,7 +90,7 @@ export default function App() {
     return () => {
       cancelled = true;
     };
-  }, [prefsReady, online, favoritePersonId]);
+  }, [prefsReady, favoritePersonId]);
 
   async function handlePersonChange(next) {
     setPerson(next);
@@ -136,9 +135,8 @@ export default function App() {
             {favoriteHomeToday
               ? " · hoy home"
               : favoriteHomeTomorrow
-                ? " · mañana home (aviso disponible)"
+                ? " · mañana home (aviso al abrir)"
                 : " · sin home mañana"}
-            {!online && " · avisos solo en línea"}
           </p>
         )}
       </header>
